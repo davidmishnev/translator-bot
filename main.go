@@ -10,8 +10,8 @@ import (
 )
 
 func main() {
-	botToken := "7131193852:AAGlXe5YnBRQfHsSdQ8xzR5wnY3YA1bJQ_I"
-	apiKey := os.Getenv("AQVNy8rAlnAU7SxUvMb0uZqQ1rGPbPAeOhFG1lO3")
+	botToken := "BOT_API_KEY"
+	apiKey := os.Getenv("API_KEY")
 	url := "https://translate.yandex.com/"
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
@@ -23,7 +23,6 @@ func main() {
 		log.Fatal(err)
 	}
 	_ = apiKey
-	// AQVNy8rAlnAU7SxUvMb0uZqQ1rGPbPAeOhFG1lO3
 	updates, _ := bot.UpdatesViaLongPolling(nil)
 	defer bot.StopLongPolling()
 	bh, _ := th.NewBotHandler(bot, updates)
