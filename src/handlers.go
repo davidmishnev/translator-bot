@@ -14,7 +14,7 @@ func handleTextMessage(ctx context.Context, b *bot.Bot, update *models.Update) {
 		Text:   "You sent: " + update.Message.Text,
 	})
 	if err != nil {
-		log.Println("Error sending message:", err)
+		log.Fatal(err)
 	}
 }
 
@@ -27,7 +27,39 @@ func handleHelp(ctx context.Context, b *bot.Bot, update *models.Update) {
 		Text:   helpText,
 	})
 	if err != nil {
-		log.Println("Error sending help message:", err)
+		log.Fatal(err)
+	}
+}
+
+func handleCommand(ctx context.Context, b *bot.Bot, update *models.Update) {
+	if update.Message == nil {
+		return
+	}
+
+	chatID := update.Message.Chat.ID
+	command := update.Message.Text
+
+	switch command {
+	case "/help":
+		handleHelp(ctx, b, update) //isn't it redundant? could be
+
+	case "/start":
+		_, err := b.SendMessage(ctx, &bot.SendMessageParams{
+			ChatID: chatID,
+			Text:   "Please, enter output message language",
+		})
+		if err != nil {
+			log.Println("Error sending /start response:", err)
+		}
+
+	default:
+		_, err := b.SendMessage(ctx, &bot.SendMessageParams{
+			ChatID: chatID,
+			Text:   "Unknown command: " + command + ". Try /help",
+		})
+		if err != nil {
+			log.Println("Error sending unknown command response:", err)
+		}
 	}
 }
 

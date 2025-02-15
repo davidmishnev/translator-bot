@@ -23,8 +23,8 @@ func main() {
 	req.Header.Set("Authorization: ", "Api-Key "+apiKey) //Request header
 
 	BOT, err := bot.New(botToken)
-
-	BOT.RegisterHandler(bot.HandlerTypeMessageText, "/", 0, handleTextMessage)
+	// something goes wrong from there?
+	//	BOT.RegisterHandler(bot.HandlerTypeMessageText, "/", 0, handleCommand)
 	BOT.RegisterHandler(bot.HandlerTypeMessageText, "/help", 0, handleHelp)
 	BOT.RegisterHandler(bot.HandlerTypeMessageText, "", 0, handler)
 	BOT.Start(context.Background())
