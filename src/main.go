@@ -6,6 +6,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"os/signal"
 )
 
 func main() {
@@ -22,10 +23,11 @@ func main() {
 
 	req.Header.Set("Authorization: ", "Api-Key "+apiKey) //Request header
 
-	BOT, err := bot.New(botToken)
-	// something goes wrong from there?
-	//	BOT.RegisterHandler(bot.HandlerTypeMessageText, "/", 0, handleCommand)
-	BOT.RegisterHandler(bot.HandlerTypeMessageText, "/help", 0, handleHelp)
-	BOT.RegisterHandler(bot.HandlerTypeMessageText, "", 0, handler)
-	BOT.Start(context.Background())
+	ctx, cancel := signal.NotifyContext(context.Background(), os.Interrupt)
+	defer cancel()
+	opts := []bot.Option{
+		bot.WithDefaultHandler(handleCommand),
+	}
+	BOT, err := bot.New(botToken, opts...)
+	BOT.Start(ctx)
 }
