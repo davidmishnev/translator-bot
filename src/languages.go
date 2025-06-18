@@ -175,7 +175,7 @@ var Languages = map[string]bool{
 	"ne":     true,
 	"nl":     true,
 	"no":     true,
-	//	"os":     true,
+	//"os":     true,
 	"pa":     true,
 	"pap":    true,
 	"pl":     true,

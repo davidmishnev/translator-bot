@@ -25,9 +25,11 @@ func main() {
 
 	ctx, cancel := signal.NotifyContext(context.Background(), os.Interrupt)
 	defer cancel()
-	opts := []bot.Option{
-		bot.WithDefaultHandler(handleCommand),
-	}
-	BOT, err := bot.New(botToken, opts...)
+	BOT, err := bot.New(botToken)
+	BOT.RegisterHandler(bot.HandlerTypeMessageText, "/start", bot.MatchTypeExact, handleCommand)
+	BOT.RegisterHandler(bot.HandlerTypeMessageText, "/help", bot.MatchTypeExact, handleHelp)
+	//BOT.RegisterHandler(bot.HandlerTypeCallbackQueryData, "button0", 0, )
+	BOT.RegisterHandler(bot.HandlerTypeMessageText, "", bot.MatchTypeContains, messageHandler)
+
 	BOT.Start(ctx)
 }
