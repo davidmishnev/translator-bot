@@ -11,9 +11,8 @@ import (
 
 func main() {
 
-	botToken := "7131193852:AAGlXe5YnBRQfHsSdQ8xzR5wnY3YA1bJQ_I"    //bot
-	apiKey := os.Getenv("AQVNy8rAlnAU7SxUvMb0uZqQ1rGPbPAeOhFG1lO3") //api
-	// AQVNy8rAlnAU7SxUvMb0uZqQ1rGPbPAeOhFG1lO3
+	botToken := "TOKEN"    //bot
+	apiKey := os.Getenv("TOKEN") //api
 	url := "https://translate.api.cloud.yandex.net" //url
 
 	req, err := http.NewRequest("GET", url, nil) //http request
