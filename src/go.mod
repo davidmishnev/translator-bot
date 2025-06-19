@@ -4,9 +4,7 @@ go 1.22.3
 
 toolchain go1.22.7
 
-require (
-	github.com/go-telegram/bot v1.14.0
-)
+require github.com/go-telegram/bot v1.15.0
 
 require (
 	github.com/andybalholm/brotli v1.1.1 // indirect

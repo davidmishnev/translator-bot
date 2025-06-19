@@ -29,7 +29,7 @@ func handleCommand(ctx context.Context, b *bot.Bot, update *models.Update) {
 	case "/start":
 		_, err := b.SendMessage(ctx, &bot.SendMessageParams{
 			ChatID: chatID,
-			Text:   "pls send a picture/text",
+			Text:   "Привет, это бот переводчик, пожалуйста, отправьте текст который вы хотите перевести!",
 		})
 		if err != nil {
 			log.Println("Error sending /start response:", err)
@@ -66,15 +66,35 @@ func messageHandler(ctx context.Context, b *bot.Bot, update *models.Update) {
 }
 
 func handleText(ctx context.Context, b *bot.Bot, update *models.Update) {
-	chatID := update.Message.Chat.ID
-	text := update.Message.Text
-
+	jsonValue.Texts = update.Message.Text
 	_, err := b.SendMessage(ctx, &bot.SendMessageParams{
-		ChatID: chatID,
-		Text:   text,
+		ChatID: update.Message.Chat.ID,
+		Text:   "На какой язык вы хотите перевести этот текст? ",
+		ReplyMarkup: &models.InlineKeyboardMarkup{
+			InlineKeyboard: [][]models.InlineKeyboardButton{
+				{
+					{
+						Text:         "Русский",
+						CallbackData: "button_ru",
+					},
+					{
+						Text:         "Английский",
+						CallbackData: "button_en",
+					},
+					{
+						Text:         "Французский",
+						CallbackData: "button_fr",
+					},
+					{
+						Text:         "Японский",
+						CallbackData: "button_ja",
+					},
+				},
+			},
+		},
 	})
 	if err != nil {
-		log.Println("Error sending text response:", err)
+		log.Println("Ошибка отправки сообщения:", err)
 	}
 }
 
@@ -87,5 +107,25 @@ func handlePhoto(ctx context.Context, b *bot.Bot, update *models.Update) {
 	})
 	if err != nil {
 		log.Println("Error sending photo:", err)
+	}
+}
+
+func handleCallbackData(ctx context.Context, b *bot.Bot, update *models.Update) {
+	callbackData := update.CallbackQuery.Data
+	switch callbackData {
+	case "button_ru":
+		jsonValue.TargetLanguageCode = "ru"
+		break
+	case "button_en":
+		jsonValue.TargetLanguageCode = "en"
+		break
+	case "button_fr":
+		jsonValue.TargetLanguageCode = "fr"
+		break
+	case "button_ja":
+		jsonValue.TargetLanguageCode = "ja"
+		break
+	default:
+		break
 	}
 }
