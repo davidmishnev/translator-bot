@@ -24,7 +24,7 @@ type ResponseData struct {
 }
 
 var jsonValue jsonData
-var apiKey = os.Getenv("AQVNyxkKoJu7PK42eAXJKMi7AfwBuKn3HluCWw08")        //api
+var apiKey = os.Getenv("API-KEY")        //api
 var url = "https://translate.api.cloud.yandex.net/translate/v2/translate" //url
 
 func saveToJson() {
@@ -87,9 +87,9 @@ func makeRequest() (string, error) {
 
 func main() {
 
-	botToken := "7131193852:AAGlXe5YnBRQfHsSdQ8xzR5wnY3YA1bJQ_I" //bot
+	botToken := "BOT_TOKEN" //bot
 
-	folderIDvalue := "b1gtccjhdqmvpftp1ctc"
+	folderIDvalue := "FOLDER_ID"
 
 	jsonValue.FolderId = folderIDvalue
 
