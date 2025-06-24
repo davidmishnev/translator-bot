@@ -1,10 +1,12 @@
 package main
 
 import (
+	"bytes"
 	"context"
 	"encoding/json"
 	"fmt"
 	"github.com/go-telegram/bot"
+	"io"
 	"log"
 	"net/http"
 	"os"
@@ -17,32 +19,79 @@ type jsonData struct {
 	TargetLanguageCode string `json:"targetLanguageCode"`
 }
 
+type ResponseData struct {
+	Text string `json:"text"`
+}
+
 var jsonValue jsonData
+var apiKey = os.Getenv("AQVNyxkKoJu7PK42eAXJKMi7AfwBuKn3HluCWw08")        //api
+var url = "https://translate.api.cloud.yandex.net/translate/v2/translate" //url
 
-func main() {
-
-	botToken := "7131193852:AAGlXe5YnBRQfHsSdQ8xzR5wnY3YA1bJQ_I"    //bot
-	apiKey := os.Getenv("AQVNyxkKoJu7PK42eAXJKMi7AfwBuKn3HluCWw08") //api
-	url := "https://translate.api.cloud.yandex.net"                 //url
-	folderIDvalue := "b1gtccjhdqmvpftp1ctc"
-
-	jsonValue.FolderId = folderIDvalue
+func saveToJson() {
 	data, err := json.MarshalIndent(jsonValue, "", "  ")
 	if err != nil {
 		fmt.Println("Ошибка сериализации:", err)
 		return
 	}
-	err = os.WriteFile("../body.json", data, 0644)
+	err = os.WriteFile("body.json", data, 0644)
 	if err != nil {
-		fmt.Println("Ошибка записи:", err)
-		return
+		log.Fatal(err)
 	}
-	req, err := http.NewRequest("GET", url, nil) //http request
+}
+
+func makeRequest() (string, error) {
+	jsonBytes, err := os.ReadFile("body.json")
+	if err != nil {
+		log.Fatal(err)
+	}
+	buffer := bytes.NewBuffer(jsonBytes)
+	req, err := http.NewRequest("POST", url, buffer)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	req.Header.Set("Authorization: ", "Api-Key "+apiKey) //Request header
+	req.Header.Set("Authorization", "Api-Key "+apiKey)
+	req.Header.Set("Content-Type", "application/json")
+
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer func(Body io.ReadCloser) {
+		err := Body.Close()
+		if err != nil {
+			panic(err)
+		}
+	}(resp.Body)
+
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	var result ResponseData
+	err = json.Unmarshal(body, &result)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	var translatedText string
+	if result.Text != "" {
+		translatedText = result.Text
+	} else {
+		translatedText = "перевод не найден"
+	}
+	return translatedText, nil
+}
+
+func main() {
+
+	botToken := "7131193852:AAGlXe5YnBRQfHsSdQ8xzR5wnY3YA1bJQ_I" //bot
+
+	folderIDvalue := "b1gtccjhdqmvpftp1ctc"
+
+	jsonValue.FolderId = folderIDvalue
 
 	ctx, cancel := signal.NotifyContext(context.Background(), os.Interrupt)
 	defer cancel()

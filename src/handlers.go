@@ -53,6 +53,7 @@ func messageHandler(ctx context.Context, b *bot.Bot, update *models.Update) {
 
 	if update.Message.Text != "" {
 		handleText(ctx, b, update)
+		saveToJson()
 		return
 	}
 
@@ -115,17 +116,69 @@ func handleCallbackData(ctx context.Context, b *bot.Bot, update *models.Update) 
 	switch callbackData {
 	case "button_ru":
 		jsonValue.TargetLanguageCode = "ru"
+		saveToJson()
+		translation, err := makeRequest()
+		if err != nil {
+			log.Println(err)
+		}
+		_, err = b.SendMessage(ctx, &bot.SendMessageParams{
+			ChatID: update.Message.Chat.ID,
+			Text:   translation,
+		})
+		if err != nil {
+			log.Println("Error sending translation:", err)
+		}
 		break
 	case "button_en":
 		jsonValue.TargetLanguageCode = "en"
+		saveToJson()
+		translation, err := makeRequest()
+		if err != nil {
+			log.Println(err)
+		}
+		_, err = b.SendMessage(ctx, &bot.SendMessageParams{
+			ChatID: update.Message.Chat.ID,
+			Text:   translation,
+		})
+		if err != nil {
+			log.Println("Error sending translation:", err)
+		}
 		break
 	case "button_fr":
 		jsonValue.TargetLanguageCode = "fr"
+		saveToJson()
+		translation, err := makeRequest()
+		if err != nil {
+			log.Println(err)
+		}
+		_, err = b.SendMessage(ctx, &bot.SendMessageParams{
+			ChatID: update.Message.Chat.ID,
+			Text:   translation,
+		})
+		if err != nil {
+			log.Println("Error sending translation:", err)
+		}
 		break
 	case "button_ja":
 		jsonValue.TargetLanguageCode = "ja"
+		saveToJson()
+		translation, err := makeRequest()
+		if err != nil {
+			log.Println(err)
+		}
+		_, err = b.SendMessage(ctx, &bot.SendMessageParams{
+			ChatID: update.Message.Chat.ID,
+			Text:   translation,
+		})
+		if err != nil {
+			log.Println("Error sending translation:", err)
+		}
 		break
-	default:
-		break
+	}
+	_, err := b.AnswerCallbackQuery(ctx, &bot.AnswerCallbackQueryParams{
+		CallbackQueryID: update.CallbackQuery.ID,
+	})
+	if err != nil {
+		return
 	}
 }
